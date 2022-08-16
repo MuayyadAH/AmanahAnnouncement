@@ -1,0 +1,117 @@
+﻿@model News
+
+@{
+    ViewData["Controller"] = "News"; // Controller in English
+    ViewData["ControllerAR"] = "اخبار الامانة"; // Controller in Arabic
+
+    ViewData["Title"] = "تعديل الخبر";
+}
+
+
+<form method="post" asp-action="Edit" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label asp-for="Title"></label>
+                <input asp-for="Title" type="text" class="form-control" id="inputEmail4">
+            </div>
+        </div>
+        <br />
+        @Html.TextAreaFor(Model => Model.Content, new { @id = "summernote", @row = 5 , @name = "editordata"})
+
+        <button type="submit" class="btn btn-primary">تعديل الخبر</button>
+        <button class="btn btn-danger" href="/News/Index">العودة الى الخلف</button>
+
+    </div>
+</form>
+
+
+
+@{
+    if (Model.Attachement != null) {
+        int counter = 1;
+        string Link = "Link" + counter;
+        string CopyButton = "CopyButton" + counter;
+        String[] attachmentsList = Model.Attachement.Split(", ");
+        <form>
+            <div class="container">
+                <div class="table-responsive" style="margin-top: 25px;">
+                    <table class="table table-striped table-bordered Standard">
+                        <thead>
+                            <tr class="primary">
+                                <th>#</th>
+                                <th>اسم الملف المرفق</th>
+                                <th>نسخ الرابط</th>
+                                <th>الاجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var attachment in attachmentsList)
+                                {
+                                    <tr class="center">
+
+                                        <td>@counter</td>
+                                        <td><a class="Link_@counter" href="~/Uploads/News/@attachment">@attachment</a></td>
+                                        <td>
+                                            <button type="button" class="btn CopyButton_@counter">
+                                                <i class="fa-solid fa-copy fa-xl"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="btn" type="submit" asp-action="DeleteFileSeperate" asp-route-id="@Model.Id" asp-route-attachment="@attachment">
+                                                <i class="text-danger fa-solid fa-trash-can fa-xl"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    counter++;
+                                }
+                            }
+                        <script>
+                            function copyTextToClipboard(link) {
+
+                                navigator.clipboard.writeText(link).then(function() {
+                                    console.log('Async: Copying to clipboard was successful!');
+                                }, function(err) {
+                                    console.error('Async: Could not copy text: ', err);
+                                });
+                            }
+                            var path = location.protocol + '//' + location.host + '/Uploads/News/';
+
+                            @{
+                            for (int i = 1; i <= counter; i++)
+                            {
+                                        @: var copyButton_@i = document.querySelector('.CopyButton_@i');
+                                        @: var linkCopy_@i = document.querySelector('.Link_@i');
+                                        @:copyButton_@(i).addEventListener('click', function(event) {
+                                        @:copyTextToClipboard(path + linkCopy_@(i).innerHTML);
+                                        @: });
+                            }
+                            }
+                                //var path = location.protocol+'//'+location.host+'/Uploads/News/';
+                                //var copyButton = document.querySelector('.@CopyButton');
+                                //var linkCopy = document.querySelector('.@Link');
+
+                                //copyButton.addEventListener('click', function(event) {
+                                //copyTextToClipboard(path+linkCopy.innerHTML);
+                                //});
+
+                        </script>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+}
+}
+
+
+<script>
+    $('#summernote').summernote({
+        placeholder: 'محتوى الخبر',
+        tabsize: 2,
+        height: 200
+    });
+</script>

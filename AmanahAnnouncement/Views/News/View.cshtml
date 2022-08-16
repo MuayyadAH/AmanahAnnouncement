@@ -1,0 +1,157 @@
+﻿@using System.Globalization
+@model dynamic
+@{
+	News news = Model.ViewNews;
+}
+@{
+    ViewData["Controller"] = "News";
+    ViewData["ControllerAR"] = "اخبار الامانة";
+
+    ViewData["Title"] = @news.Title;
+}
+
+<div id="maincontent" style="clear:both">	
+		<div class="container">
+			@{
+			if (User.Identity.IsAuthenticated) {
+					<style>.NewsControl { margin-bottom: 30px; }</style>
+					<div class="NewsControl">
+						<p class="text-primary" style="display: inline;">حالة الخبر: &nbsp; &nbsp;
+							<span>
+								@{
+									if ((@news.isPublished == true)) {
+										@: <i class="fa-solid fa-circle text-success"></i>
+										@: <span>تم النشر</span>
+									}
+									else if ((@news.isPublished == false)) {
+										@: <i class="fa-solid fa-circle text-danger"></i>
+										@: <span>لم يتم النشر</span>
+									}
+									else {
+										@: <i class="fa-solid fa-circle text-danger"></i>
+										@: <span>الخبر محذوف (مؤرشف)</span>
+									}
+								}
+						</p>
+						<br><br>
+						<p class="text-primary" style="display: inline;">التحكم بالخبر: &nbsp; &nbsp;</p>
+						<div class="btn-group mb-5">
+							<a asp-controller="News" asp-action="Edit" asp-route-id="@news.Id" class="btn btn-primary">تعديل</a>
+							<a asp-controller="News" asp-action="Delete" asp-route-id="@news.Id" class="btn btn-danger">حذف</a>
+						</div>
+					</div>
+			}
+			}
+
+			<div class="row">
+				<div class="col-md-9">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="post-content">
+								<h2 class="text-color-primary">@news.Title</h2>
+								
+									<div class="mb-md">
+										@{
+											
+										}
+										<span>
+											@news.CreationDate.ToString("dddd dd MMMM yyyy",CultureInfo.CreateSpecificCulture("ar-SA"))هــ
+											&nbsp;
+											- 
+											&nbsp;
+											@news.CreationDate.ToString("dd MMMM yyyy",CultureInfo.CreateSpecificCulture("ar-US")) م
+											
+										</span>
+									</div>
+									@Html.Raw(@news.Content)
+
+									@if (news.Attachement != null && User.Identity.IsAuthenticated)
+									{
+										<p class="text-danger text-bold">المرفقات لا تظهر للزوار, يمكن نسخ رابط المرفق ووضعه في الخبر</p>
+										String[] attachmentsList = news.Attachement.Split(", ");
+										foreach(var item in attachmentsList)
+										{
+											<p>المرفق: <a href="~/Uploads/News/@item">@item</a></p>
+										}
+									}
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+					</div>
+					<div class="col-md-12">						
+						<hr>                        					
+					</div>
+				
+					<div class="col-md-12 mb-lg">
+						@*<h2 class="heading-primary mt-lg"> <em class="fa fa-plus-circle"></em> أضف تعليقك</h2
+						<a name="Comments"></a> *@
+
+						@*<form method="post" name="AddComment" id="AddComment" action="#Comments" enctype="multipart/form-data">
+						<div class="row">				
+							<div class="form-group">
+								<div class="col-md-12">
+									<label for="Name" class="text-bold">الاسم <span class="required">*</span></label>
+									<input type="text" value="" maxlength="100" class="form-control" name="Name" id="Name">												
+									<label id="NameError" class="error"></label>
+								</div>
+							</div>
+						</div>
+						<div class="row">				
+							<div class="form-group">
+								<div class="col-md-12">
+									<label for="Name" class="text-bold">نص التعليق: <span class="required">*</span></label>
+									<textarea rows="2" cols="60" maxlength="2000" name="Comment" id="Comment" title="نص التعليق" placeholder="نص التعليق" class="form-control"></textarea>											
+									<label id="CommentError" class="error"></label>
+								</div>
+							</div>
+						</div>
+	
+						<!-- Security Image field   --> 
+						<div class="row">
+							<div class="col-md-12">
+								<label for="SecurityImage" class="text-bold">رمز التحقق<span class="required">*</span></label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group">
+								<div class="col-md-2">
+									<div class="captcha form-control">
+										<div class="captcha-image">
+											<img src="../../captcha/index.php" alt="الرجاء إدخال رمز التحقق الموجود في الصورة" title="الرجاء إدخال رمز التحقق الموجود في الصورة">								
+										</div>												
+									</div>
+								</div>
+								<div class="col-md-10">
+									<input type="text" value="" maxlength="5" data-msg-captcha="إدخال رمز التحقق الموجود في الصورة" data-msg-required="إدخال رمز التحقق الموجود في الصورة" placeholder="أدخل رمز التحقق" class="form-control input-lg captcha-input" name="SecurityImage" id="SecurityImage">
+									<label id="SecurityImageError" class="error mt-lg"></label>
+								</div>
+							</div>
+						</div>
+
+							<div class="row">
+								<div class="col-md-12">
+									<input type="submit" name="send" id="send" value="إضافة التعليق" class="btn btn-primary btn-lg pull-right">
+									<input name="tokenInput" type="hidden" value="a7fb28ec47a55b316ab1fc526e8a6f26">		</div>
+							</div>
+						</form>*@
+		
+					</div>
+				</div>
+				
+				<div class="col-md-3">
+					<aside class="sidebar">
+						<section class="call-to-action call-to-action-default mb-xl pt-md pr-sm pl-sm">
+							<h3 class="heading-primary"><a href="index.php" class="lnk-primary">آخر الأخبار</a></h3>
+							<ul class="nav nav-list mb-xlg">
+							@foreach (News item in Model.LastNews) {
+								<li><a asp-controller="News" asp-action="View" asp-route-id="@item.Id">@item.Title</a></li>
+							}
+						</section>							
+					</aside>
+				</div>
+			</div>
+		
+		</div>
+		<!-- end container div -->	
+</div>

@@ -1,0 +1,43 @@
+﻿@using System.Globalization
+@model News
+@{
+    ViewData["Controller"] = "News";
+    ViewData["ControllerAR"] = "اخبار الامانة";
+
+    ViewData["Title"] = "حذف الخبر";
+}
+<div class="container">
+    <h1 class="text-danger text-weight-bold">هل انت متأكد من رغبتك بحذف هذا الخبر؟</h1>
+
+    <div id="maincontent" style="clear:both">
+
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                <h2 class="text-color-primary">@Model.Title</h2>
+                <p>
+                    <em class="text-color-primary  fa fa-calendar-alt"></em>
+                    <span class="text-color-primary  text-bold">تاريخ نشر الخبر: </span>
+                    @Model.CreationDate.ToString("dddd dd MMMM yyyy",CultureInfo.CreateSpecificCulture("ar-SA"))هــ
+                    &nbsp; - &nbsp;
+                    @Model.CreationDate.ToString("dd MMMM yyyy",CultureInfo.CreateSpecificCulture("ar-US")) م
+                </p>
+
+                <p>@Html.Raw(Model.Content)</p>
+
+
+            </div>
+        </div>
+
+        <form method="post" asp-action="Delete">
+            @Html.AntiForgeryToken()
+            <div class="text-center">
+                <button type="submit" class="btn btn-danger btn-lg">حذف الخبر</button>
+                <button onclick="history.go(-1)" class="btn btn-primary btn-lg">العودة</button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+

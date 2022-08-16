@@ -1,0 +1,271 @@
+﻿@using AmanahAnnouncement.Interfaces
+@using Microsoft.AspNetCore.Identity
+
+@inject IPortalRepository portalRepo
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
+@inject INewsRepository newsRepo
+@inject IAnnouncementRepository annsRepo
+
+
+@model dynamic
+@{
+    IEnumerable<News> unPublishedNews = Model.News;
+    IEnumerable<Announcment> unPublishedAnns = Model.Anns;
+
+    IEnumerable<News> PublishedNews = await newsRepo.getPublishedNews();
+    IEnumerable<Announcment> PublishedAnns = await annsRepo.getPublishedAnns();
+}
+
+@{
+    ViewData["Title"] = "لوحة التحكم";
+}
+
+
+
+<style>
+    .page-header {
+        display: none;
+    }
+
+    #maincontent {
+        padding-top: 50px;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <div class="col-md-12  hidden-xs">
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#introduction_part" data-toggle="tab" aria-expanded="true">بانتظار النشر (@(unPublishedAnns.Count()+unPublishedNews.Count()))</a>
+                </li>
+                <li class="">
+                    <a href="#building_systems_part" data-toggle="tab" aria-expanded="false">المنشوره (@(PublishedAnns.Count()+PublishedNews.Count()))</a>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content">
+            <div class="panel-group tab-pane active" id="introduction_part">
+                <div class="col-md-12 text-center">
+                    <h1 class="text-primary">اخبار بانتظار النشر</h1>
+                    <div class="table-responsive">
+                        @* TABLE START *@
+                        <table class="table table-striped table-bordered table-hover Standard text-center" style="margin: 0 auto !important; margin-bottom: 50px; background-color: rgb(255, 255, 255); width: 1140px;">
+                            <thead>
+                                <tr class="primary">
+                                    <th style="line-height: 1.42857;">#</th>
+                                    <th style="line-height: 1.42857;">الحالة</th>
+                                    <th style="line-height: 1.42857;">عنوان الاعلان</th>
+                                    <th style="line-height: 1.42857;">بواسطة</th>
+                                    <th style="line-height: 1.42857;">الاجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                int count = 1;
+                                foreach (News n in unPublishedNews)
+                                {
+                                Users user = await UserManager.FindByIdAsync(n.NewsUserId);
+                                    <tr class="center">
+                                        <td style="line-height: 1.42857;">@count</td>
+                                        <td style="line-height: 1.42857;">
+                                            <i class="fa-solid fa-circle text-danger"></i>&nbsp;
+                                            بانتظار النشر
+                                        </td>
+                                        <td style="line-height: 1.42857;">@n.Title</td>
+                                        <td style="line-height: 1.42857;">@user.firstName @user.lastName</td>
+                                        <form>
+                                        <td style="line-height: 1.42857;">
+                                            <div class="btn-group" role="group">
+                                                <button asp-action="PublishService" asp-route-id="@n.Id" asp-route-control="News" type="submit" class="btn">
+                                                    <i class="fa-solid fa-check fa-xl text-success"></i>
+                                                </button>
+                                                <button asp-controller="News" asp-action="Delete" asp-route-id="@n.Id" type="submit" class="btn">
+                                                    <i class="fa-solid fa-xmark fa-xl text-danger"></i>
+                                                </button>
+                                                <a asp-controller="News" asp-action="View" asp-route-id="@n.Id" type="button" class="btn">
+                                                    <i class="fa-solid fa-file-lines fa-xl text-primary"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                        </form>
+                                    </tr>
+                                count++;
+                                }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @* TABLE END*@
+
+
+                    <div class="col-md-12 text-center">
+                        <h1 style="margin-top: 75px;" class="text-primary">اعلانات بانتظار النشر</h1>
+                        <div class="table-responsive">
+                            @* TABLE START *@
+                            <table class="table table-striped table-bordered table-hover Standard mx-auto w-auto" style="margin: 0 auto !important; background-color: rgb(255, 255, 255); width: 1140px;">
+                                <thead>
+                                    <tr class="primary">
+                                        <th style="line-height: 1.42857;">#</th>
+                                        <th style="line-height: 1.42857;">الحالة</th>
+                                        <th style="line-height: 1.42857;">عنوان الاعلان</th>
+                                        <th style="line-height: 1.42857;">بواسطة</th>
+                                        <th style="line-height: 1.42857;">الاجراء</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                    count = 1;
+                                    foreach (Announcment a in unPublishedAnns)
+                                    {
+                                    Users user = await UserManager.FindByIdAsync(a.AnnouncementUserId);
+                                        <tr class="center">
+                                            <td style="line-height: 1.42857;">@count</td>
+                                            <td style="line-height: 1.42857;">
+                                                <i class="fa-solid fa-circle text-danger"></i>&nbsp;
+                                                بانتظار النشر
+                                            </td>
+                                            <td style="line-height: 1.42857;">@a.Title</td>
+                                            <td style="line-height: 1.42857;">@user.firstName @user.lastName</td>
+                                            <form>
+                                            <td style="line-height: 1.42857;">
+                                                <div class="btn-group" role="group">
+                                                    <button asp-action="PublishService" asp-route-id="@a.Id" asp-route-control="Announcment" type="submit" class="btn">
+                                                        <i class="fa-solid fa-check fa-xl text-success"></i>
+                                                    </button>
+                                                    <button asp-controller="Announcment" asp-action="Delete" asp-route-id="@a.Id" type="submit" class="btn">
+                                                        <i class="fa-solid fa-xmark fa-xl text-danger"></i>
+                                                    </button>
+                                                    <a asp-controller="Announcment" asp-action="View" asp-route-id="@a.Id" type="button" class="btn">
+                                                        <i class="fa-solid fa-file-lines fa-xl text-primary"></i>
+                                                    </a>
+                                                </div>
+
+                                            </td>
+                                            </form>
+                                        </tr>
+                                    count++;
+                                    }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="panel-group tab-pane" id="building_systems_part">
+                <div class="col-md-12 text-center">
+                    <h1 class="text-primary">اخبار تم نشرها</h1>
+                    <div class="table-responsive">
+                        @* TABLE START *@
+                        <table class="table table-striped table-bordered table-hover Standard mx-auto w-auto" style="margin: 0 auto !important; background-color: rgb(255, 255, 255); width: 1140px;">
+                            <thead>
+                                <tr class="primary">
+                                    <th style="line-height: 1.42857;">#</th>
+                                    <th style="line-height: 1.42857;">الحالة</th>
+                                    <th style="line-height: 1.42857;">عنوان الاعلان</th>
+                                    <th style="line-height: 1.42857;">بواسطة</th>
+                                    <th style="line-height: 1.42857;">الاجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                count = 1;
+                                foreach (News n in PublishedNews)
+                                {
+                                Users user = await UserManager.FindByIdAsync(n.NewsUserId);
+                                    <tr class="center">
+                                        <td style="line-height: 1.42857;">@count</td>
+                                        <td style="line-height: 1.42857;">
+                                            <i class="fa-solid fa-circle text-success"></i>&nbsp;
+                                            تم النشر
+                                        </td>
+                                        <td style="line-height: 1.42857;">@n.Title</td>
+                                        <td style="line-height: 1.42857;">@user.firstName @user.lastName</td>
+                                        <form>
+                                        <td style="line-height: 1.42857;">
+                                            <div class="btn-group" role="group">
+                                                <button asp-action="PublishService" asp-route-id="@n.Id" asp-route-control="News" type="submit" class="btn">
+                                                    <i class="fa-solid fa-xmark fa-xl text-danger"></i>
+                                                </button>
+                                                <a asp-controller="News" asp-action="View" asp-route-id="@n.Id" type="button" class="btn">
+                                                    <i class="fa-solid fa-file-lines fa-xl text-primary"></i>
+                                                </a>
+                                            </div>
+
+                                        </td>
+                                        </form>
+                                    </tr>
+                                count++;
+                                }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @* TABLE END*@
+                </div>
+                @* LAST *@
+
+                <br><br><br>
+
+                <div class="col-md-12 text-center">
+                    <h1 style="margin-top: 75px;" class="text-primary">اعلانات تم نشرها</h1>
+                    <div class="table-responsive">
+                        @* TABLE START *@
+                        <table class="table table-striped table-bordered table-hover Standard mx-auto w-auto" style="margin: 0 auto !important; background-color: rgb(255, 255, 255); width: 1140px;">
+                            <thead>
+                                <tr class="primary">
+                                    <th style="line-height: 1.42857;">#</th>
+                                    <th style="line-height: 1.42857;">الحالة</th>
+                                    <th style="line-height: 1.42857;">عنوان الاعلان</th>
+                                    <th style="line-height: 1.42857;">بواسطة</th>
+                                    <th style="line-height: 1.42857;">الاجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                count = 1;
+                                foreach (Announcment a in PublishedAnns)
+                                {
+                                Users user = await UserManager.FindByIdAsync(a.AnnouncementUserId);
+                                    <tr class="center">
+                                        <td style="line-height: 1.42857;">@count</td>
+                                        <td style="line-height: 1.42857;">
+                                            <i class="fa-solid fa-circle text-success"></i>&nbsp;
+                                            تم النشر
+                                        </td>
+                                        <td style="line-height: 1.42857;">@a.Title</td>
+                                        <td style="line-height: 1.42857;">@user.firstName @user.lastName</td>
+                                        <form>
+                                        <td style="line-height: 1.42857;">
+                                            <div class="btn-group" role="group">
+                                                <button asp-action="PublishService" asp-route-id="@a.Id" asp-route-control="Announcment" type="submit" class="btn">
+                                                    <i class="fa-solid fa-xmark fa-xl text-danger"></i>
+                                                </button>
+                                                <a asp-controller="Announcment" asp-action="View" asp-route-id="@a.Id" type="button" class="btn">
+                                                    <i class="fa-solid fa-file-lines fa-xl text-primary"></i>
+                                                </a>
+                                            </div>
+
+                                        </td>
+                                        </form>
+                                    </tr>
+                                count++;
+                                }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @* TABLE END*@
+                </div>
+                @* LAST *@
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
