@@ -1,0 +1,233 @@
+﻿@using AmanahAnnouncement.Interfaces
+@using System.Globalization
+@using AngleSharp.Io
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
+
+@model IEnumerable<News>
+
+@{
+    ViewData["Controller"] = "News";
+    ViewData["ControllerAR"] = "اخبار الامانة";
+
+    ViewData["Title"] = ViewData["ControllerAR"];
+}
+
+
+@{
+	if (TempData["SuccessMessage"] != null) {
+	@:<script>
+	@: $(window).on('load', function() {
+	@: $('#myModal').modal('show');
+	@:});
+	@:</script>
+	}
+
+}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style>
+h1, h2, h3, h4, h5, h6, h7 {
+	font-family: HelveticaBold,Tahoma;
+}
+<!--Customized bootstrap alert with icons-->
+.modal-confirm {		
+	color: #636363;
+	width: 325px;
+	font-size: 14px;
+}
+.modal-confirm .modal-content {
+	padding: 20px;
+	border-radius: 5px;
+	border: none;
+}
+.modal-confirm .modal-header {
+	border-bottom: none;   
+	position: relative;
+}
+.modal-confirm h4 {
+	text-align: center;
+	font-size: 26px;
+	margin: 30px 0 -15px;
+}
+.modal-confirm .form-control, .modal-confirm .btn {
+	min-height: 40px;
+	border-radius: 3px; 
+}
+.modal-confirm .close {
+	position: absolute;
+	top: -5px;
+	right: -5px;
+}	
+.modal-confirm .modal-footer {
+	border: none;
+	text-align: center;
+	border-radius: 5px;
+	font-size: 13px;
+}	
+.modal-confirm .icon-box {
+	color: #fff;		
+	position: absolute;
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+	top: -70px;
+	width: 95px;
+	height: 95px;
+	border-radius: 50%;
+	z-index: 9;
+	background: #82ce34;
+	padding: 15px;
+	text-align: center;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+}
+.modal-confirm .icon-box i {
+	font-size: 58px;
+	position: relative;
+	top: 3px;
+}
+.modal-confirm.modal-dialog {
+	margin-top: 80px;
+}
+.modal-confirm .btn {
+	color: #fff;
+	border-radius: 4px;
+	background: #82ce34;
+	text-decoration: none;
+	transition: all 0.4s;
+	line-height: normal;
+	border: none;
+}
+.modal-confirm .btn:hover, .modal-confirm .btn:focus {
+	background: #6fb32b;
+	outline: none;
+}
+.trigger-btn {
+	display: inline-block;
+	margin: 100px auto;
+}
+</style>
+
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="icon-box">
+					<i class="material-icons">&#xE876;</i>
+				</div>				
+				<h4 class="modal-title w-100">@TempData["SuccessMessage"]</h4>
+			</div>
+			<div class="modal-body">
+				<p class="text-center">رقم الخبر: @TempData["NewsId"]</p>
+				<p class="text-center"><a asp-controller="News" asp-action="View" asp-route-id="@TempData["NewsId"]">
+					لمعاينة الخبر قم بالضغط هنا
+				</a></p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-success btn-block" data-dismiss="modal">موافق</button>
+			</div>
+		</div>
+	</div>
+</div>  
+
+
+	@if (User.Identity.IsAuthenticated)
+	{
+		<style>
+			#welcomeMessage {display: inline; color: #fff; }
+			#employeeContainer { padding-top: 24px; padding-bottom: 24px; }
+		</style>
+
+		<div class="container bg-primary" id="employeeContainer" style="margin-bottom: 30px;">
+			<div class="row">
+				<div class="col-md-6">
+					<i class="fa-solid fa-user fa-xl text-white"></i>&nbsp
+					<h1 id="welcomeMessage">مرحبا, @UserManager.GetUserAsync(User).Result.firstName</h1>
+				</div>
+
+				<div class="col-md-6 text-left">
+					<a asp-controller="Portal" asp-action="Index" type="button" class="btn btn-success">لوحة تحكم المركز الاعلامي</a>
+					<a asp-controller="@ViewData["Controller"]" asp-action="Create" type="button" class="btn btn-secondary">اضافة خبر جديد</a>
+					<a data-target=".bs-example-modal-sm" type="button" class="btn btn-danger" data-toggle="modal">تسجيل الخروج</a>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- LOGOUT CONFIRMATION -->
+		<div tabindex="-1" class="modal bs-example-modal-sm" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header"><h4>تسجيل الخروج <i class="fa fa-lock"></i></h4></div>
+					<div class="modal-body"><i class="fa fa-question-circle"></i> هل انت متأكد برغبتك بتسجيل الخروج؟</div>
+					<div class="modal-footer"><a asp-controller="Portal" asp-action="Logout" class="btn btn-danger btn-block">تسجيل الخروج</a></div>
+				</div>
+			 </div>
+		</div>
+	}
+
+<div class="container">
+
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			@if (Model.Count() <= 0) {
+				<h1 class="text-primary text-center">لا توجد اخبار جديدة</h1>
+			}
+			else
+			{
+				int count=1;
+				foreach (var item in Model) {
+					if (count%3==0) {
+					@: <div class="row">
+					}
+					<div class="col-md-4">
+						<section class="call-to-action call-to-action-default mb-xl pb-xs pt-lg">
+							<div class="row" style="min-height: 93px;">
+								<div class="recent-posts">
+									<article class="post">
+										<div class="date">
+											<span class="day bg-white">@item.CreationDate.ToString("dd",CultureInfo.CreateSpecificCulture("ar-SA"))</span>
+											<span class="month">@item.CreationDate.ToString("MMMM",CultureInfo.CreateSpecificCulture("ar-SA"))</span>
+										</div>
+										<h2 class="heading-primary pt-xs"><a asp-controller="News" asp-action="View" asp-route-id="@item.Id" class="text-color-primary">@item.Title</a></h2>
+									</article>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 mt-md" style="min-height: 120px;">
+                                    @{
+                                        string plainText = System.Text.RegularExpressions.Regex.Replace(@item.Content, "<.*?>", string.Empty);
+										@if (plainText.Count() < 140) {
+											<p>@plainText</p>
+										}
+										else {
+											<p>@plainText.Substring(0,130) ...</p>
+										}
+										
+									}
+								</div>
+								
+											
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<a aasp-controller="News" asp-action="View" asp-route-id="@item.Id" class="btn btn-xs btn-primary pull-right mb-md">المزيد...</a>
+								</div>	
+							</div>
+						</section>
+					</div>
+					if (count % 3 == 0)
+					{
+						@: </div>
+					}
+					count++;
+				}
+			}
+
+        </div>
+    </div>
+</div>
+

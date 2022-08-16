@@ -1,0 +1,6 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Changa:wght@500&family=Montserrat:wght@300&family=Shadows+Into+Light&family=Staatliches&display=swap');
+
+h1, h2, h3, h4, h5, h6, h7 {
+    font-family: 'Changa' !important;
+    font-weight: 800 !important;
+}

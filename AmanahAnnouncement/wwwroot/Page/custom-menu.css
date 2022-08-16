@@ -1,0 +1,78 @@
+/*********haj2022***********/
+
+.forcefullwidth_wrapper_tp_banner {
+    margin-top: 0px!important;
+}
+
+.haj-box {
+    position: absolute;
+    width: 14% !important;
+    z-index: 10;
+    top: 14% !important;
+    right: 1% !important;
+    margin-right: -15px;
+    bottom: auto;
+    display: block;
+    height: auto;
+}
+
+
+/* Medium devices (landscape tablets, 768px and up) */
+
+@media only screen and (min-width: 481px)and(max-width: 768px) {
+    .haj-box {
+        width: 15% !important;
+        z-index: 10px;
+        top: 12% !important;
+        right: 1% !important;
+        margin-right: -15px;
+    }
+}
+
+
+/* ipad+ntablet*/
+
+
+/* 
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .haj-box {
+        width: 15% !important;
+        z-index: 10px;
+        top: 13% !important;
+        right: 1% !important;
+        margin-right: -18px;
+    }
+}
+
+
+/* Extra large devices (largelaptops and desktops,1200px and up) */
+
+@media only screen and (min-width: 1200px) {
+    .haj-box {
+        width: 13% !important;
+        z-index: 10px;
+        top: 14% !important;
+        right: 2% !important;
+        margin-right: -2px;
+    }
+}
+
+
+/*Mobile devices 320px — 480px
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    .haj-box {
+        display: none;
+    }
+}
+*/
+
+@media only screen and (min-device-width: 375px) and (max-device-width: 667px) {
+    .forcefullwidth_wrapper_tp_banner {
+        margin-top: 10px!important;
+    }
+}
