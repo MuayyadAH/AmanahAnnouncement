@@ -143,6 +143,7 @@ namespace AmanahAnnouncement.Controllers
             if (!User.Identity.IsAuthenticated) return RedirectToAction("Error", "Home");
 
             var ann = await annRepo.GetByIdAsync(id);
+            var file = await fileRepo.GetByIdAsync(id);
             if (ann != null)
             {
                 ann.isPublished = false;

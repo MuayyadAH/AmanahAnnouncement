@@ -189,6 +189,9 @@
                                         <td style="line-height: 1.42857;">
                                             <div class="btn-group" role="group">
                                                 <button asp-action="PublishService" asp-route-id="@n.Id" asp-route-control="News" type="submit" class="btn">
+                                                    <i class="fa-solid fa-check fa-xl text-success"></i>
+                                                </button>
+                                                <button type="button" class="btn">
                                                     <i class="fa-solid fa-xmark fa-xl text-danger"></i>
                                                 </button>
                                                 <a asp-controller="News" asp-action="View" asp-route-id="@n.Id" type="button" class="btn">
@@ -243,6 +246,9 @@
                                         <td style="line-height: 1.42857;">
                                             <div class="btn-group" role="group">
                                                 <button asp-action="PublishService" asp-route-id="@a.Id" asp-route-control="Announcment" type="submit" class="btn">
+                                                    <i class="fa-solid fa-check fa-xl text-success"></i>
+                                                </button>
+                                                <button type="button" class="btn">
                                                     <i class="fa-solid fa-xmark fa-xl text-danger"></i>
                                                 </button>
                                                 <a asp-controller="Announcment" asp-action="View" asp-route-id="@a.Id" type="button" class="btn">
